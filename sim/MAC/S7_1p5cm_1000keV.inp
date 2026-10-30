@@ -1,0 +1,72 @@
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
+TITLE
+Paper 1 Benchmark FLUKA - S7 @ 1000 keV, th=1.5 cm
+*
+DEFAULTS                                                              PRECISIO  
+LOW-PWXS        -1.0                                                            
+*
+* Nguon photon 1000 keV (1.000000E-03 GeV) huong doc truc +z
+* GOAT 2026-10-30: BEAM WHAT(3)=10000 mrad (>2000pi) -> nguon diem dang huong
+BEAM      -1.000E-03              10000.                              PHOTON
+BEAMPOS          0.0       0.0       0.0                                        
+*
+GEOBEGIN                                                              COMBNAME  
+    0    0          Geometry for Paper 1 (MCNPX Benchmark equivalent)
+SPH BLK        0.0 0.0 40.0 120.0
+SPH WORLD      0.0 0.0 40.0 100.0
+RCC COLLOUT    0.0 0.0 10.0 0.0 0.0 35.0 3.0
+RCC COLLIN     0.0 0.0 10.0 0.0 0.0 35.0 2.0
+RCC SAMPLE     0.0 0.0 50.0 0.0 0.0 1.5000 5.0
+RCC DETECT     0.0 0.0 70.0 0.0 0.0 2.0 10.0
+RCC SHIELDO    0.0 0.0 45.0 0.0 0.0 30.0 15.0
+RCC CAP        0.0 0.0 75.0 0.0 0.0 2.0 15.0
+RCC SHIELDI    0.0 0.0 45.0 0.0 0.0 30.0 13.0
+END
+* Regions
+BLKHOLE      5 +BLK -WORLD
+COLLBODY     5 +COLLOUT -COLLIN
+COLLBORE     5 +COLLIN
+SAMPLE       5 +SAMPLE
+DETECT       5 +DETECT
+SHIELD       5 +SHIELDO -SHIELDI
+CAP          5 +CAP
+CHAMBER      5 +SHIELDI -COLLOUT -SAMPLE -DETECT
+AIRVOID      5 +WORLD -SHIELDO -COLLOUT -CAP
+END
+GEOEND
+*
+* Dinh nghia nguyen to vat lieu
+MATERIAL           3  -6.94100   0.53400                              LITHIUM   
+MATERIAL           5 -10.81100   2.34000                              BORON     
+MATERIAL          20 -40.07800   1.55000                              CALCIUM   
+MATERIAL          64-157.25000   7.90000                              GADOLINI  
+*
+* Glass sample S7 (rho = 4.1810 g/cm3)
+MATERIAL                         4.18100                              GL_S7     
+COMPOUND    -0.15529     BORON  -0.46622    OXYGEN  -0.04674   SILICONGL_S7     
+COMPOUND    -0.07147   CALCIUM  -0.26028  GADOLINI                    GL_S7     
+*
+* Gan vat lieu cho cac vung hinh hoc
+ASSIGNMA    BLCKHOLE   BLKHOLE                                                  
+ASSIGNMA        LEAD  COLLBODY                                                  
+ASSIGNMA      VACUUM  COLLBORE                                                  
+ASSIGNMA       GL_S7    SAMPLE                                                  
+ASSIGNMA      VACUUM    DETECT                                                  
+ASSIGNMA        LEAD    SHIELD
+ASSIGNMA        LEAD       CAP                                                  
+ASSIGNMA      VACUUM   CHAMBER                                                  
+ASSIGNMA      VACUUM   AIRVOID                                                  
+*
+* Ha nguong van chuyen xuong 1 keV
+EMFCUT    -1.000E-04 1.000E-06 1.000E-05    VACUUM  @LASTMAT          PROD-CUT  
+EMFCUT    -1.000E-04 1.000E-06             BLKHOLE  @LASTREG                    
+*
+* Scoring: USRTRACK (F4 equivalent track-length fluence)
+USRTRACK           1    PHOTON        21    DETECT 628.31853         1TotFlux   
+USRTRACK   1.050E-03       0.0                                        &         
+USRTRACK           1    PHOTON        22    DETECT 628.31853         1PeakFlux  
+USRTRACK   1.010E-03 9.900E-04                                        &         
+*
+RANDOMIZ           1                                                            
+START      @PRIMARIES@.                                                           
+STOP                                                                            
